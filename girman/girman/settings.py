@@ -25,8 +25,8 @@ SECRET_KEY = 'django-insecure-e(r3r-b-xeh*gl$4omzq42e&h!d+j(tyitey)*&%w*jsi%_4vp
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["api-girman-478368a575e7.herokuapp.com", "localhost:5000", "localhost:4000"]
-
+# ALLOWED_HOSTS = ["api-girman-478368a575e7.herokuapp.com", "localhost:5000", "localhost:4000"]
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -73,12 +73,17 @@ WSGI_APPLICATION = 'girman.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django_mongodb_engine',
+#         'NAME': 'testdb',
+#         'HOST':'cluster0.j2w5ysn.mongodb.net',
+#         'USER':'smt',
+#         'PASSWORD':'abc1234'
+#     }
+# }
+
+# mongodb+srv://smt:abc1234@cluster0.j2w5ysn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
 
 
 # Password validation

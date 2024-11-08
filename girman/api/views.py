@@ -2,10 +2,18 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from json import dumps, load
 import os
+import pymongo
 
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
+    
+
+# Mongo client
+client = pymongo.MongoClient("mongodb+srv://smt:abc1234@cluster0.j2w5ysn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+db = client["testdb"]
+collection = db["users"]
+# Mongo client ends
     
     
 '''
@@ -25,54 +33,47 @@ def searchUser(request):
             return JsonResponse({"status":500, "message":"Query parameter not found"}) 
        
         query = query.lower()
-        
         response = []
-        print(query)
-        with open(os.path.join(BASE_DIR, "data/fts.txt"), "r") as f:
+        toReturn = collection.find(
+            {
+            "$or":[
+                {"first_name":{"$regex":query, "$options":"i"}},
+                {"last_name":{"$regex":query, "$options":"i"} },
+                {"city":{"$regex":query, "$options":"i"} },
+                {"contact_number":{"$regex":query, "$options":"i"} },
+            ]
+            }
+        )
+        for r in toReturn:
+            del r["_id"]
+            response.append(r)
             
-            for index, line in enumerate(f):
-                print(line)
-                
-                if query in line:
-                    print("True")
-                    line = line.rstrip("\n").split(":")
-                    rec = {
-                        "name":line[0].capitalize(),
-                        "city":line[1].capitalize(),
-                        "contact":line[2]
-                    }
-                    if len(query) == 1:
-                        if (line[0][0] == query):
-                            response.insert(0, rec)
-                            continue
-                        
-                    response.append(rec)
-                    
-              
-                
         return JsonResponse({"data":response})
 
 
     return JsonResponse({"status":405, "message":"Method not allowed"})
 
 
-def createFTS(request):
+'''
+
+    saveRecordsToMongo: GET Method
+    Saves all the json data to mongo db and returns the count of documents.
+
+'''
+def saveRecordsToMongo(request):
     
-    print("Creating FTS")
     data = []
     
     with open(os.path.join(BASE_DIR, "data", "user_list.json")) as f:
         data = load(f)
         f.close()
-    
-    with open(os.path.join(BASE_DIR, "data", "fts.txt"), "w") as f:
+            
+    if len(data):
         
-        for record in data:
-            f.write(record["first_name"].lower()+" "+record["last_name"].lower()+":"+record["city"].lower()+":"+record["contact_number"]+"\n")
-        f.close()
-                        
+        collection.insert_many(data)
+        count = collection.count_documents({})
+        
+        return HttpResponse(str(count)+" documents saved")
     
-    return HttpResponse("OK")
-
-
-
+    return HttpResponse("No documents found")
+    

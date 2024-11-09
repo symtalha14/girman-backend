@@ -73,6 +73,7 @@ WSGI_APPLICATION = 'girman.wsgi.application'
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
+    "https://girman-frontend-40b724b4bfc9.herokuapp.com/"
 ]
 
 # Database

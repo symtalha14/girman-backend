@@ -58,8 +58,11 @@ def searchUser(request):
 
     saveRecordsToMongo: GET Method
     Saves all the json data to mongo db and returns the count of documents.
+    
+    To be used internally!
 
 '''
+
 def saveRecordsToMongo(request):
     
     data = []
